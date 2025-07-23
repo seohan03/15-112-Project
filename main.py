@@ -1,20 +1,29 @@
 from cmu_graphics import *
-from recipes.py import *
+from PIL import Image, ImageDraw
+
+# from recipes.py import *
 
 def onAppStart(app):
-    app.width = 200
-    app.height = 200
-    app.size = 500
+    app.width = 600
+    app.height = 600
+    app.stepsPerSecond = 2
+    app.stepCounter = 0
+    app.kitchenImg = CMUImage(Image.open('images/kitchen.png'))
+    
 
-    # coffee values
-    app.coffeex = 130
-    app.coffeey = 190
-    app.coffeeWidth = 200
-    app.coffeeHeight = 300
+def onStep(app):
+    app.stepCounter += 1   
 
 def redrawAll(app):
-    # drawImage('kitchen.png', 0, 0, width = app.width, height = app.height)
-    pass
+    drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
+    if app.stepCounter%2 == 0:
+        customer = CMUImage(Image.open('customers/customers2.png'))
+    else:
+        customer = CMUImage(Image.open('customers/customers.png'))
+    drawImage(customer, 80, 150, width = 190, height = 187)
+    # drawImage(app.customer2Img, 50, 150, width = 229, height = 229)
+
+
 
 def main():
     runApp()
