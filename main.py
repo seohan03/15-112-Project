@@ -2,7 +2,7 @@ from cmu_graphics import *
 from PIL import Image, ImageDraw
 import random
 from customer import *
-from food import *
+from recipes import *
 
 def onAppStart(app):
     app.counter = 0
@@ -10,73 +10,92 @@ def onAppStart(app):
     app.height = 700 
     app.screen = 'start'  
 
-    app.orderNames = [
-         None, 
-        'coconut latte', 'iced americano',  
-        'iced matcha latte', 'hot matcha latte',
-        'ube pancake', 'pandan egg waffle',
-        'mango bingsoo', 'melon bingsoo'
-        ] 
-
-    # images
-    app.kitchenImg = CMUImage(Image.open('images/kitchen.png'))
-    app.recipeImg = CMUImage(Image.open('images/recipeScene.png'))
-
-# Mouse Press and Change Screen Functions
-
-def onMousePress(app,mouseX,mouseY):
-    if app.screen == 'start':
-        if (mouseX> 0):
-            app.screen = 'kitchen'
-    elif app.screen == 'kitchen':
-        if (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
-            app.screen = 'recipeBook'
+    # {name : [order price, order cost, recipe page url]}
+    app.orders = {
+        'Coconut Latte'     : [2.99, 0.30], 
+        'Iced Americano'    : [1.99, 0.20],
+        'Iced Matcha Latte' : [3.99, 0.99],
+        'Hot Matcha Latte'  : [3.99, 0.99],
+        'Ube Pancake'       : [4.99, 1.50],
+        'Pandan Egg Waffle' : [4.99, 1.59],
+        'Mango Bingsoo'     : [4.50, 1.20],
+        'Melon Bingsoo'     : [3.99, 0.99]
+    }
     
-############################################################
-# Start Screen
-############################################################
-
-def start_redrawAll(app):
-    drawLabel('start', 200, 160, size=24, bold=True)
-
-def start_onKeyPress(app, key):
-    if key == 'space':
-        setActiveScreen('kitchen')
-
-############################################################
-# Kitchen Screen
-############################################################
-
-def kitchen_onScreenActivate(app):
+    # kitchen
     app.moneyMade = 0
     app.moneySpent = 0
     app.served = 0
-    custSprite = CMUImage(Image.open('customers/pink-still.png'))
-    app.currCust = Customer(custSprite, app.orderNames)
+    app.currCust = Customer(CMUImage(Image.open('customers/pink-still.png')),
+                            app.orders)
+    app.currRecipe = Recipe(app.currCust.orderName)
 
-def kitchen_redrawAll(app):
-    drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
-    drawImage(app.currCust.getImg(), 80, 207, width=189, height=189)
-    drawLabel(app.currCust.speak(), 240, 100, size = 10)
-    # drawRect(340, 60, 160, 120, fill = 'green', opacity = 50)
+    # images
+    app.kitchenImg = CMUImage(Image.open('images/kitchen.png'))
 
-def kitchen_onMousePress(app, x, y):
-    if (340 <= x <= 500) and (60 <= y <= 180):
-        setActiveScreen('recipeBook')
+############################################################
+# Mouse Press / Change Screen Functions
+############################################################
+
+
+def onMousePress(app,mouseX,mouseY):
+    if app.screen == 'start':
+        if (mouseX > 0):
+            app.screen = 'kitchen'
+    elif app.screen == 'kitchen':
+        # not magic numbers, values based on where buttons are in drawing
+        if (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
+            app.screen = 'recipeBook'
+    elif app.screen == 'recipeBook':
+        if (45 <= mouseX <= 90) and (70 <= mouseY <= 113):
+            app.screen = 'kitchen'
+        if app.currRecipe.isOnReady(mouseX, mouseY):
+            app.screen = 'cookGame'
+            app.gameImg = app.currRecipe.getGameScreen(mouseX, mouseY)
+    
+    
+############################################################
+# Draw 
+############################################################
+
+def redrawAll(app):
+
+    # start screen
+    if app.screen == 'start':
+        drawLabel('start', 200, 160, size=24, bold=True)
+
+
+    #kitchen screen
+    elif app.screen == 'kitchen':
+        drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
+        drawImage(app.currCust.sprite, 80, 207, width=189, height=189)
+        drawLabel(app.currCust.speak(), 240, 100, size = 10)
+        # drawRect(340, 60, 160, 120, fill = 'green', opacity = 50)
     
 
-############################################################
-# Recipe Book Screen
-############################################################
+    #recipe book screen
+    elif app.screen == 'recipeBook':
+        drawImage(app.currRecipe.getRecipeBookScreen(), 0, 0,
+                  width = app.width, height = app.height)
+        # X location
+        # drawRect(45, 70, 45, 43, fill='green', opacity = 69)
+        
+        # Ready locations
+        # drawRect(75, 410, 150, 80, fill = 'green', opacity = 50)
+        # drawRect(380, 410, 150, 80, fill = 'green', opacity = 50)
+    
+    elif app.screen == 'cookGame':
+        drawImage(app.gameImg, 0, 0, width = app.width, height = app.height)
 
-def recipeBook_redrawAll(app):
-    drawImage(app.recipeImg, 0, 0, width = app.width, height = app.height)
+
+
+    
 
 ############################################################
 # Main
 ############################################################
 
 def main():
-    runAppWithScreens(initialScreen='kitchen')
+    runApp()
 
 main()
