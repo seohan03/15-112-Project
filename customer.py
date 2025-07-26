@@ -7,7 +7,6 @@ phrases = [
 ]
 
 class Customer:
-            self.phrase = phrases[0]
     def __init__(self, image, ordersDict):
         self.sprite = image
 
@@ -21,4 +20,7 @@ class Customer:
         phrase = phrases[random.randrange(len(phrases))]
         orderIdx = phrase.find('order')
         return phrase[:orderIdx] + self.orderName + phrase[orderIdx+5:]
+
+    def isSatisfied(self, givenOrder):
+        return givenOrder == self.orderName
 

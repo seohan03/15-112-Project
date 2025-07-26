@@ -42,9 +42,9 @@ class Recipe():
 
     def getGameScreen(self, x, y):
         sideOfPage = self.getSideOfPage(x, y)
-        recipeBook = self.getRecipeBookScreen()
+        recipeBook = self.getRecipePage()
         print(sideOfPage, recipeBook)
-        if sideOfPage == 'left':
+        if sideOfPage == 'leftPage':
             if recipeBook == 'pancakePage':
                 return 'recipes/food/ube.png'
             elif recipeBook == 'coffeePage':
@@ -54,7 +54,7 @@ class Recipe():
             elif recipeBook == 'bingsooPage':
                 return 'recipes/food/melon.png'
             
-        elif sideOfPage == 'right':
+        elif sideOfPage == 'rightPage':
             if recipeBook == 'pancakePage':
                 return 'recipes/food/pandan.png'
             elif recipeBook == 'coffeePage':
