@@ -34,10 +34,10 @@ ingredients = {
 
 class Pancakes():
 
-    def __init__(self, orderName):
-        if orderName == 'Ube Pancake':
+    def __init__(self, chosenRecipe):
+        if chosenRecipe == 'Ube Pancake':
             self.order = 'ube'
-        elif orderName == 'Pandan Egg Waffle':
+        elif chosenRecipe == 'Pandan Egg Waffle':
             self.order = 'pandan'
         self.step = 0
     

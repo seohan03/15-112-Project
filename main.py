@@ -67,9 +67,14 @@ def onMousePress(app,mouseX,mouseY):
         if (mouseX <= 0) and (mouseY <= 0):
             app.screen = 'kitchen'
 
+        chosenRecipe = app.currRecipe.getChosenRecipe(mouseX, mouseY)
         if (app.currRecipe.orderName == 'Ube Pancake' or 
             app.currRecipe.orderName == 'Pandan Egg Waffle'):
-            app.currCook = Pancakes(app.currRecipe.orderName)
+            app.currCook = Pancakes(chosenRecipe)
+        elif (app.currRecipe.orderName == 'Mango Bingsoo' or 
+             app.currRecipe.orderName == 'Melon Bingsoo'):
+             app.currCook = Bingsoo(chosenRecipe)
+
             
             
 def onMouseDrag(app, mouseX, mouseY):

@@ -39,8 +39,18 @@ class Recipe():
         # Right page
         elif (380 <= x <= 530) and (410 <= y <= 490):
             return 'rightPage'
+    
+    def getGameScreen(self):
+        if self.getRecipePage() == 'pancakePage':
+            return 'pancakeKitchen.png'
+        elif self.getRecipePage() == 'coffeePage':
+            return 'coffeeKitchen.png'
+        elif self.getRecipePage() == 'matchaPage':
+            return 'matchaKitchen.png'
+        elif self.getRecipePage() == 'bingsooPage':
+            return 'bingsooKitchen.png'
 
-    def getGameScreen(self, x, y):
+    def getChosenRecipe(self, x, y):
         sideOfPage = self.getSideOfPage(x, y)
         recipeBook = self.getRecipePage()
         print(sideOfPage, recipeBook)
