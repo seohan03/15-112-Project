@@ -41,8 +41,14 @@ class Pancakes():
             self.order = 'pandan'
         self.step = 0
     
-    # def mouseOnIngredient(self, x, y):
-    #     if 
+    def getAllIngredients(self):
+        return ingredients
+    
+    def mouseOnIngredient(self, ingredient, x, y):
+        url, left, top, width, height = ingredients[ingredient] 
+        right = left + width
+        bottom = top + height
+        return (left <= x <= right) and (left <= y <= right)
         
     def chefSpeak(self):
         if self.order == 'ube':

@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 from customer import *
 from recipes import *
 from profits import *
+from pancakes import *
 
 def onAppStart(app):
     app.counter = 0
@@ -29,6 +30,7 @@ def onAppStart(app):
     app.currCust = Customer(CMUImage(Image.open('customers/pink-still.png')),
                             app.orders)
     app.currRecipe = Recipe(app.currCust.orderName)
+    
 
     # images
     app.kitchenImg = CMUImage(Image.open('images/kitchen.png'))
@@ -42,21 +44,33 @@ def onMousePress(app,mouseX,mouseY):
     if app.screen == 'start':
         if (mouseX > 0):
             app.screen = 'kitchen'
+
     elif app.screen == 'kitchen':
         # not magic numbers, values based on where buttons are in drawing
         if (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
             app.screen = 'recipeBook'
+            
     elif app.screen == 'recipeBook':
+        # not magic numbers, values based on where buttons are in drawing
+        # exit out button
         if (45 <= mouseX <= 90) and (70 <= mouseY <= 113):
             app.screen = 'kitchen'
+        # ready button
         if app.currRecipe.isOnReady(mouseX, mouseY):
             app.gameImg = (CMUImage(Image.open(
                             app.currRecipe.getGameScreen(mouseX, mouseY))
                             ))
             app.screen = 'cookGame'
+
     elif app.screen =='cookGame':
+        # exit button
         if (mouseX <= 0) and (mouseY <= 0):
             app.screen = 'kitchen'
+
+        if (app.currRecipe.orderName == 'Ube Pancake' or 
+            app.currRecipe.orderName == 'Pandan Egg Waffle'):
+            app.currCook = Pancakes(app.currRecipe.orderName)
+            
             
 def onMouseDrag(app, mouseX, mouseY):
     if app.screen == 'cookGame':
@@ -72,17 +86,7 @@ def redrawAll(app):
     # start screen
     if app.screen == 'start':
         drawImage(CMUImage(Image.open('recipes/food/pandan.png')), 0, 0, width = app.width, height = app.height)
-        drawImage(CMUImage(Image.open('recipes/ingredients/pancakes/flour.png')),
-                  65, 140, width = 122, height = 147)
-        drawImage(CMUImage(Image.open('recipes/ingredients/pancakes/milk.png')), 
-                  190, 145, width = 85, height = 141)
         
-        drawImage(CMUImage(Image.open('recipes/ingredients/pancakes/egg.png')), 
-                  440, 160, width = 57, height = 66)
-        drawImage(CMUImage(Image.open('recipes/ingredients/pancakes/ubeYam.png')), 
-                  360, 220, width = 121, height = 80)
-        drawImage(CMUImage(Image.open('recipes/ingredients/pancakes/pandanExtract.png')), 
-                  490, 235, width = 69, height = 71)
 
     #kitchen screen
     elif app.screen == 'kitchen':
@@ -105,7 +109,9 @@ def redrawAll(app):
     
     elif app.screen == 'cookGame':
         drawImage(app.gameImg, 0, 0, width = app.width, height = app.height)
-        drawRect(35, 50, 45, 43, fill='green', opacity = 50)
+        for key in app.currCook.getAllIngredients():
+            drawImage(?)
+        
         
 
 
