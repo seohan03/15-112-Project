@@ -1,6 +1,7 @@
 # Controls all the mouse clicks/drags for cooking pancakes
 
 ubeSteps = [
+    'Make sure to do these in order!!',
     'Add the pancake mix',
     'Add egg into the bowl',
     'Add milk into the bowl',
@@ -12,6 +13,7 @@ ubeSteps = [
 ]
 
 pandanSteps = [
+    'Make sure to do these in order!!',
     'Add the pancake mix',
     'Add egg into the bowl',
     'Add milk into the bowl',
@@ -36,8 +38,29 @@ pancakeIngredients = {
                                     360, 220, 121, 80),
                     'pandanExtract' : (f'{pancakePath}pandanExtract.png', 
                                     490, 235, 69, 71),
-                    'bowl'          : (f'{pancakePath}bowl.png',
-                                    350, 350, 205, 157)
+                    'emptyBowl'     : (f'{pancakePath}bowl.png',
+                                    350, 350, 205, 157),
+                    'spoon'         : (f'{pancakePath}spoon.png',
+                                    50, 50, 90, 150)
                 },
-    'bowl1'     : (f'{pancakePath}bowl1.png', 350, 350, 205, 157)
+
+    'bowlStates': {
+                    () : f'{pancakePath}bowl.png',
+                    ('flour',) : 
+                                    f'{pancakePath}bowl1.png',
+                    ('flour', 'egg') : 
+                                    f'{pancakePath}bowl2.png',
+                    ('flour', 'egg', 'milk') : 
+                                    f'{pancakePath}bowl3.png',
+                    ('flour', 'egg', 'milk', 'pandanExtract') : 
+                                    f'{pancakePath}bowlWithPandan.png',
+                    ('flour', 'egg', 'milk', 'pandanExtract', 'spoon') : 
+                                    f'{pancakePath}pandanMix.png',
+                    ('flour', 'egg', 'milk', 'ubeYam') : 
+                                    f'{pancakePath}bowlWithUbe.png',
+                    ('flour', 'egg', 'milk', 'ubeYam', 'spoon') : 
+                                    f'{pancakePath}ubeMix.png',
+
+                }
+
 }

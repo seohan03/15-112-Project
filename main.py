@@ -5,12 +5,20 @@ from recipes import *
 from profits import *
 from cook import *
 
+def rectsOverlap(x1, y1, w1, h1, x2, y2, w2, h2):
+    return not (x1 + w1 < x2 or x1 > x2 + w2 or  
+                y1 + h1 < y2 or y1 > y2 + h2)
 
 def onAppStart(app):
     app.counter = 0
     app.width = 600
     app.height = 700 
-    app.screen = 'start'  
+    app.screen = 'start' 
+    app.dragging = None
+    app.draggingName = None
+    app.dragOffset = (0, 0)
+    # reset buttons for cook game
+    app.rx, app.ry, app.rw, app.rh = 500, 20, 80, 40
 
     # {name : [order price, order cost, recipe page url]}
     app.orders = {
@@ -42,15 +50,27 @@ def onAppStart(app):
 
 
 def onMousePress(app,mouseX,mouseY):
+
+    #######################################
+    # Start Screen
+    #######################################
     if app.screen == 'start':
         if (mouseX > 0):
             app.screen = 'kitchen'
 
+
+    #######################################
+    # Kitchen Screen
+    #######################################
     elif app.screen == 'kitchen':
         # not magic numbers, values based on where buttons are in drawing
         if (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
             app.screen = 'recipeBook'
-            
+    
+
+    #######################################
+    # Recipe Book Screen
+    #######################################
     elif app.screen == 'recipeBook':
         # not magic numbers, values based on where buttons are in drawing
         # exit out button
@@ -80,15 +100,55 @@ def onMousePress(app,mouseX,mouseY):
             
             app.screen = 'cookGame'
 
+
+    #######################################
+    # Cooking Game Screen
+    #######################################
+
     elif app.screen =='cookGame':
-        # exit button
+        
+        if ((app.rx <= mouseX <= app.rx + app.rw) and 
+            (app.ry <= mouseY <= app.ry + app.rh)):
+            app.currCook.resetIngredients()
+            
+        clicked = app.currCook.getIngredientUnder(mouseX, mouseY)
+        if clicked != None and clicked != 'emptyBowl':
+            app.draggingName = clicked
+            url, x, y, w, h = app.currCook.ingredients['starter'][clicked]
+            # to see where inside the image user clicked
+            app.dragOffset = (mouseX - x, mouseY - y)
+        else:
+            app.draggingName = None
+            
         if (mouseX <= 0) and (mouseY <= 0):
             app.screen = 'kitchen'
         
         
 def onMouseDrag(app, mouseX, mouseY):
-    if app.screen == 'cookGame':
-        pass
+
+    if app.screen == 'cookGame' and app.draggingName != None:
+        ingre = app.draggingName
+        url, x0, y0, w, h = app.currCook.ingredients['starter'][ingre]
+        dx, dy = app.dragOffset
+        newX = mouseX - dx
+        newY = mouseY - dy
+        app.currCook.ingredients['starter'][ingre] = (url, newX, newY, w, h)
+
+def onMouseRelease(app, mouseX, mouseY):
+
+    if app.screen == 'cookGame' and app.draggingName != None:
+        name = app.draggingName
+        # get the ingredient’s current box
+        if name != 'emptyBowl':
+            url, inx, iny, inw, inh = app.currCook.ingredients['starter'][name]
+            # get the bowl’s box
+            url, bx, by, bw, bh = app.currCook.ingredients['starter']['emptyBowl']
+            if rectsOverlap(inx, iny, inw, inh, bx, by, bw, bh):
+                app.currCook.recordDrop(name)
+        
+        app.draggingName = None    
+
+
     
     
 ############################################################
@@ -123,10 +183,30 @@ def redrawAll(app):
     
     elif app.screen == 'cookGame':
         drawImage(app.gameImg, 0, 0, width = app.width, height = app.height)
+
         starterItems = app.currCook.getAllStarterIngredients()
         for name, (url, x, y, width, height) in starterItems.items():
+            if name == app.draggingName:
+                continue # so that the image gets drawn on top
+            elif name != 'emptyBowl':
+                img = CMUImage(Image.open(url))
+                drawImage(img, x, y, width = width, height = height)
+                
+        bowlUrl = app.currCook.getBowlImage()
+        url, bx, by, bw, bh  = app.currCook.ingredients['starter']['emptyBowl']
+        drawImage(CMUImage(Image.open(bowlUrl)), bx, by, width=bw, height=bh)
+
+        if app.draggingName:
+            ingredients = app.currCook.ingredients
+            url, x, y, w, h = ingredients['starter'][app.draggingName]
             img = CMUImage(Image.open(url))
-            drawImage(img, x, y, width = width, height = height)
+            drawImage(img, x, y, width=w, height=h)
+        
+        # reset button
+        
+        drawRect(app.rx, app.ry, app.rw, app.rh, fill = 'green')
+
+        
         
         
 
