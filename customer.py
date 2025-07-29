@@ -12,7 +12,7 @@ class Customer:
 
         names = [name for name in ordersDict]
         index = random.randrange(len(names))
-        self.orderName  = names[index]
+        self.orderName  = 'Ube Pancake' #should be names[index]
         
         self.price, self.cost = ordersDict[self.orderName]
     

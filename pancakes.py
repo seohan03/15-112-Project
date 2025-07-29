@@ -23,36 +23,21 @@ pandanSteps = [
 ]
 
 # IngredientName = (imageURL, left, top, width, height)
-ingredients = {
-    'flour' : ('recipes/ingredients/pancakes/flour.png', 65, 140, 122, 147),
-    'milk' : ('recipes/ingredients/pancakes/milk.png', 190, 145, 85, 141),
-    'egg' : ('recipes/ingredients/pancakes/egg.png', 440, 160, 57, 66),
-    'ubeYam' : ('recipes/ingredients/pancakes/egg.png', 360, 220, 121, 80),
-    'pandanExtract' : ('recipes/ingredients/pancakes/pandanExtract.png', 
-                       490, 235, 69, 71)
+pancakePath = 'recipes/ingredients/pancakes/'
+pancakeIngredients = {
+    'starter'   : {
+                    'flour'         : (f'{pancakePath}flour.png', 
+                                    65, 140, 122, 147),
+                    'milk'          : (f'{pancakePath}milk.png', 
+                                    190, 145, 85, 141),
+                    'egg'           : (f'{pancakePath}egg.png', 
+                                    440, 160, 57, 66),
+                    'ubeYam'        : (f'{pancakePath}ubeYam.png', 
+                                    360, 220, 121, 80),
+                    'pandanExtract' : (f'{pancakePath}pandanExtract.png', 
+                                    490, 235, 69, 71),
+                    'bowl'          : (f'{pancakePath}bowl.png',
+                                    350, 350, 205, 157)
+                },
+    'bowl1'     : (f'{pancakePath}bowl1.png', 350, 350, 205, 157)
 }
-
-class Pancakes():
-
-    def __init__(self, chosenRecipe):
-        if chosenRecipe == 'Ube Pancake':
-            self.order = 'ube'
-        elif chosenRecipe == 'Pandan Egg Waffle':
-            self.order = 'pandan'
-        self.step = 0
-    
-    def getAllIngredients(self):
-        return ingredients
-    
-    def mouseOnIngredient(self, ingredient, x, y):
-        url, left, top, width, height = ingredients[ingredient] 
-        right = left + width
-        bottom = top + height
-        return (left <= x <= right) and (left <= y <= right)
-        
-    def chefSpeak(self):
-        if self.order == 'ube':
-            return ubeSteps[self.step]
-        elif self.order == 'pandan':
-            return pandanSteps[self.step]
-

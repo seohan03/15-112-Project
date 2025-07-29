@@ -3,7 +3,8 @@ from PIL import Image, ImageDraw
 from customer import *
 from recipes import *
 from profits import *
-from pancakes import *
+from cook import *
+
 
 def onAppStart(app):
     app.counter = 0
@@ -57,26 +58,34 @@ def onMousePress(app,mouseX,mouseY):
             app.screen = 'kitchen'
         # ready button
         if app.currRecipe.isOnReady(mouseX, mouseY):
+            
+            chosenRecipe = app.currRecipe.getChosenRecipe(mouseX, mouseY)
+
             app.gameImg = (CMUImage(Image.open(
-                            app.currRecipe.getGameScreen(mouseX, mouseY))
+                            app.currRecipe.getGameImg())
                             ))
+            
+            if (app.currRecipe.orderName == 'Ube Pancake' or 
+                app.currRecipe.orderName == 'Pandan Egg Waffle'):
+                app.currCook = Pancakes(chosenRecipe)
+            elif (app.currRecipe.orderName == 'Mango Bingsoo' or 
+                app.currRecipe.orderName == 'Melon Bingsoo'):
+                app.currCook = Bingsoo(chosenRecipe)
+            elif (app.currRecipe.orderName == 'Iced Americano' or 
+                app.currRecipe.orderName == 'Coconut Latte'):
+                app.currCook = Coffee(chosenRecipe)
+            elif (app.currRecipe.orderName == 'Hot Matcha Latte' or 
+                app.currRecipe.orderName == 'Iced Matcha Latte'):
+                app.currCook = Matcha(chosenRecipe)
+            
             app.screen = 'cookGame'
 
     elif app.screen =='cookGame':
         # exit button
         if (mouseX <= 0) and (mouseY <= 0):
             app.screen = 'kitchen'
-
-        chosenRecipe = app.currRecipe.getChosenRecipe(mouseX, mouseY)
-        if (app.currRecipe.orderName == 'Ube Pancake' or 
-            app.currRecipe.orderName == 'Pandan Egg Waffle'):
-            app.currCook = Pancakes(chosenRecipe)
-        elif (app.currRecipe.orderName == 'Mango Bingsoo' or 
-             app.currRecipe.orderName == 'Melon Bingsoo'):
-             app.currCook = Bingsoo(chosenRecipe)
-
-            
-            
+        
+        
 def onMouseDrag(app, mouseX, mouseY):
     if app.screen == 'cookGame':
         pass
@@ -90,7 +99,7 @@ def redrawAll(app):
 
     # start screen
     if app.screen == 'start':
-        drawImage(CMUImage(Image.open('recipes/food/pandan.png')), 0, 0, width = app.width, height = app.height)
+        drawLabel('start', 50, 50)
         
 
     #kitchen screen
@@ -114,8 +123,10 @@ def redrawAll(app):
     
     elif app.screen == 'cookGame':
         drawImage(app.gameImg, 0, 0, width = app.width, height = app.height)
-        for key in app.currCook.getAllIngredients():
-            drawImage(?)
+        starterItems = app.currCook.getAllStarterIngredients()
+        for name, (url, x, y, width, height) in starterItems.items():
+            img = CMUImage(Image.open(url))
+            drawImage(img, x, y, width = width, height = height)
         
         
 

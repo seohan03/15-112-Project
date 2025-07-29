@@ -40,36 +40,36 @@ class Recipe():
         elif (380 <= x <= 530) and (410 <= y <= 490):
             return 'rightPage'
     
-    def getGameScreen(self):
+    def getGameImg(self):
         if self.getRecipePage() == 'pancakePage':
-            return 'pancakeKitchen.png'
-        elif self.getRecipePage() == 'coffeePage':
-            return 'coffeeKitchen.png'
-        elif self.getRecipePage() == 'matchaPage':
-            return 'matchaKitchen.png'
+            return 'recipes/food/pancakeKitchen.png'
         elif self.getRecipePage() == 'bingsooPage':
-            return 'bingsooKitchen.png'
-
+            return 'recipes/food/bingsooKitchen.png'
+        elif self.getRecipePage() == 'coffeePage':
+            return 'recipes/food/coffeeKitchen.png'
+        elif self.getRecipePage() == 'matchaPage':
+            return 'recipes/food/matchaKitchen.png'
+    
     def getChosenRecipe(self, x, y):
         sideOfPage = self.getSideOfPage(x, y)
         recipeBook = self.getRecipePage()
-        print(sideOfPage, recipeBook)
+
         if sideOfPage == 'leftPage':
             if recipeBook == 'pancakePage':
-                return 'recipes/food/ube.png'
+                return 'ube'
             elif recipeBook == 'coffeePage':
-                return 'recipes/food/coconut.png'
+                return 'coconut'
             elif recipeBook == 'matchaPage':
-                return 'recipes/food/icedMatcha.png'
+                return 'icedMatcha'
             elif recipeBook == 'bingsooPage':
-                return 'recipes/food/melon.png'
+                return 'melon'
             
         elif sideOfPage == 'rightPage':
             if recipeBook == 'pancakePage':
-                return 'recipes/food/pandan.png'
+                return 'pandan'
             elif recipeBook == 'coffeePage':
-                return 'recipes/food/americano.png'
+                return 'americano'
             elif recipeBook == 'matchaPage':
-                return 'recipes/food/hotMatcha.png'
+                return 'hotMatcha'
             elif recipeBook == 'bingsooPage':
-                return 'recipes/food/mango.png'
+                return 'mango'
