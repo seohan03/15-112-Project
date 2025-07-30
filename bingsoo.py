@@ -50,14 +50,18 @@ bingsooIngredients = {
 
     'bowlStates': {
                 () : (f'{bingsooPath}emptyBowl.png'),
-                ('mangoBlender') : 
+                ('mangoBlender',) : 
                                 (f'{bingsooPath}mangoBowl.png'),
-                ('melonBlender') : 
+                ('melonBlender',) : 
                                 (f'{bingsooPath}melonBowl.png'),
                 ('mangoBlender', 'jam') : 
                                 (f'{bingsooPath}mangoWithJam.png'),
                 ('melonBlender', 'condensedMilk') : 
-                                (f'{bingsooPath}melonWithMilk.png')
+                                (f'{bingsooPath}melonWithMilk.png'),
+                ('melonBlender', 'condensedMilk', 'iceCreamScoop') :
+                                (f'{bingsooPath}melonWithIceCream.png'),
+                ('mangoBlender', 'jam', 'iceCreamScoop') :
+                                (f'{bingsooPath}mangoWithIceCream.png')
     },
                 
     'mangoBlender'  : (f'{bingsooPath}mangoBlender.png', 
@@ -69,6 +73,6 @@ bingsooIngredients = {
     'melonChopped'  : (f'{bingsooPath}melonChopped.png', 
                         440, 160, 57, 66),
     'iceCreamScoop' : (f'{bingsooPath}iceCreamScoop.png', 
-                        490, 235, 69, 71),
+                        490, 235, 69, 71)
     
 }

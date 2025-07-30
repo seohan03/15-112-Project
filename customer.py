@@ -21,6 +21,8 @@ class Customer:
         orderIdx = phrase.find('order')
         return phrase[:orderIdx] + self.orderName + phrase[orderIdx+5:]
 
-    def isSatisfied(self, givenOrder):
-        return givenOrder == self.orderName
+    def isSatisfied(self, givenOrder, x, y):
+        if 80 <= x <= 269 and 207 <= y <= 396:
+            return givenOrder == self.orderName
+
 

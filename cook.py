@@ -13,23 +13,38 @@ class Cook:
         self.ogStarter      = copy.deepcopy(ingredients['starter'])
         self.drag           = None
         self.offset         = (0, 0)
+        self.finishedOrder  = False
+        
+
 
     def ingredientUnder(self, x, y):
         for key, (url, ix, iy, iw, ih) in self.ingredients['starter'].items():
             if (ix <= x <= ix+iw) and (iy <= y <= iy+ih):
                 return key
         return None
-    
+        
     def handleMousePress(self, x, y):
 
         if self.hitReset(x, y):
             self.resetIngredients()
         
         key = self.ingredientUnder(x, y)
-        if key != None and key != 'emptyBowl' and key != 'blender':
+
+        if (key != None and key != 'emptyBowl' 
+                        and key != 'blender' 
+                        and key != 'iceCreamTub'):
             self.drag = key
             url, ix, iy, iw, ih = self.ingredients['starter'][key]
             self.offset = (x-ix, y-iy)
+
+        elif (key == 'iceCreamTub'):
+            self.drag = 'iceCreamScoop'
+            scoopurl, sx, sy, sw, sh = self.ingredients['iceCreamScoop']
+            self.ingredients['starter']['iceCreamScoop'] = (scoopurl,
+                                                            x-sw/2, y-sh/2, 
+                                                            sw, sh)
+            
+            self.offset = (sw/2, sh/2)
 
     def handleMouseDrag(self, x, y):
         if self.drag:
@@ -44,7 +59,7 @@ class Cook:
             url, ix, iy, iw, ih = self.ingredients['starter'][key]
             # bowl
             url, bx, by, bw, bh = self.ingredients['starter']['emptyBowl']
-            bh = 157 # changing bowl height because png has empty space at top
+            bh = 130 # changing bowl height because png has empty space at top
             
             if self.overlap(ix, iy, iw, ih, bx, by, bw, bh):
                 self.dropIntoBowl(key)
@@ -70,7 +85,9 @@ class Cook:
     def bowlImage(self):
         placedSet = set(self.placed)
         bestCombo = tuple()
-        bestImg = self.ingredients['bowlStates'][()]
+        maxCombo  = max(len(combo) for combo in 
+                        self.ingredients['bowlStates'].keys())
+        bestImg   = self.ingredients['bowlStates'][()]
 
         for combo, imgPath in self.ingredients['bowlStates'].items():
             comboSet = set(combo)
@@ -79,14 +96,10 @@ class Cook:
                     bestCombo = combo
                     bestImg   = imgPath
 
+        self.finishedOrder = (len(bestCombo) == maxCombo)
+        
+
         return bestImg
-
-    def getAllStarterIngredients(self):
-        starterIngredients = dict()
-        for key, value in self.ingredients['starter'].items():
-            starterIngredients[key] = value
-
-        return starterIngredients
 
     def getScene(self):
         imgs = []
@@ -113,15 +126,7 @@ class Cook:
     def nextStep(self):
         if self.step < len(self.steps) - 1:
             self.step += 1
-
-    def getIngredientUnder(self, mx, my):
-        for name, (url, x, y, w, h) in self.getAllStarterIngredients().items():
-            if x <= mx <= x + w and y <= my <= y + h:
-                return name
-        return None
     
-    def isOnStarterIngredient(self, mx, my):
-        return (self.getIngredientUnder(mx, my) is not None)
 
     @staticmethod
     def overlap(x1,y1,w1,h1,x2,y2,w2,h2):

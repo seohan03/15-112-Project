@@ -1,9 +1,11 @@
 from cmu_graphics import *
-from PIL import Image, ImageDraw
+from PIL import Image, ImageFont
 from customer import *
 from recipes import *
 from profits import *
 from cook import *
+
+font = ImageFont.truetype("PixelifySans-Regular.ttf", size=36)
 
 def rectsOverlap(x1, y1, w1, h1, x2, y2, w2, h2):
     return not (x1 + w1 < x2 or x1 > x2 + w2 or  
@@ -39,6 +41,9 @@ def onAppStart(app):
     app.currCust = Customer(CMUImage(Image.open('customers/pink-still.png')),
                             app.orders)
     app.currRecipe = Recipe(app.currCust.orderName)
+    app.orderMade = None
+    app.orderx, app.ordery, app.orderw, app.orderh = 400, 400, 153, 168
+    app.newCustomer = False
     
 
     # images
@@ -63,9 +68,14 @@ def onMousePress(app,mouseX,mouseY):
     # Kitchen Screen
     #######################################
     elif app.screen == 'kitchen':
+        if app.orderMade != None:
+            
+
+                
         # not magic numbers, values based on where buttons are in drawing
         if (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
             app.screen = 'recipeBook'
+        
     
 
     #######################################
@@ -110,14 +120,25 @@ def onMousePress(app,mouseX,mouseY):
         
         
 def onMouseDrag(app, mouseX, mouseY):
+    if app.screen == 'kitchen':
+        if app.orderMade != None:
+            
 
     if app.screen == 'cookGame':
         app.currCook.handleMouseDrag(mouseX, mouseY)
 
 def onMouseRelease(app, mouseX, mouseY):
+    if app.screen == 'kitchen':
+        if app.orderMade != None:
+           if app.currCust.isSatisfied(app.orderMade, mouseX, mouseY):
+               app.newCustomer = True
+               
 
     if app.screen == 'cookGame':
-        app.currCook.handleMouseRelease(mouseX, mouseY)   
+        app.currCook.handleMouseRelease(mouseX, mouseY)
+        if app.currCook.finishedOrder == True:
+            app.screen = 'kitchen'
+            app.orderMade = app.currCook.chosen
 
 ############################################################
 # Draw 
@@ -127,7 +148,8 @@ def redrawAll(app):
 
     # start screen
     if app.screen == 'start':
-        drawLabel('start', 50, 50)
+        drawLabel('start', 300, 300, size = 80, font = 'Pixelify Sans')
+
         
 
     #kitchen screen
@@ -135,6 +157,12 @@ def redrawAll(app):
         drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
         drawImage(app.currCust.sprite, 80, 207, width=189, height=189)
         drawLabel(app.currCust.speak(), 240, 100, size = 10)
+        drawLabel(f'Money Made: {app.moneyMade}', app.width/2, 600, size = 20)
+        drawLabel(f'Served: {app.served}', app.width/2, 640, size = 20)
+        if app.orderMade != None:
+            drawImage((CMUImage(Image.open(
+                            f'finishedFoods/{app.currCook.chosen}')
+                            )), 400, 400, 153, 168)
         # drawRect(340, 60, 160, 120, fill = 'green', opacity = 50)
     
 
@@ -155,6 +183,9 @@ def redrawAll(app):
 
         for url, x, y, w, h in scene['images']:
             drawImage(CMUImage(Image.open(url)), x, y, width=w, height=h)
+    
+        if app.currCook.finishedOrder == True:
+            drawLabel('Done!', app.width/2, app.height/2, size = 50)
 
         # Chopping board location
         # drawRect(40, 430, 261, 150, fill = 'green', opacity = 50)
