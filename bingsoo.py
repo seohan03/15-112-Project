@@ -1,4 +1,4 @@
-mangoSteps: [
+mangoSteps = [
     'Place mango on chopping board to cut',
     'Shake mouse to cut',
     'Add cut fruit into freezing blender',
@@ -6,9 +6,9 @@ mangoSteps: [
     'Drizzle mango jam',
     'Add a scoop of vanilla ice cream',
     'All done!'
-] # type: ignore
+] 
 
-melonSteps: [
+melonSteps = [
     'Place melon on chopping board to cut',
     'Shake mouse to cut',
     'Add cut fruit into freezing blender',
@@ -16,45 +16,55 @@ melonSteps: [
     'Drizzle condensed milk',
     'Add a scoop of vanilla ice cream',
     'All done!'
-] # type: ignore
+] 
 
 # IngredientName = (imageURL, left, top, width, height)
 bingsooPath = 'recipes/ingredients/bingsoo/'
 bingsooIngredients = {
     'starter' : {
                 'blender'       : (f'{bingsooPath}blender.png',
-                                    65, 140, 122, 147),
+                                    35, 160, 243, 245),
                 'condensedMilk' : (f'{bingsooPath}condensedMilk.png', 
-                                    360, 220, 121, 80),
+                                    375, 158, 73, 86),
                 'emptyBowl'     : (f'{bingsooPath}emptyBowl.png', 
-                                    490, 235, 69, 71),
+                                    355, 365, 205, 231),
                 'mangoFruit'    : (f'{bingsooPath}mangoFruit.png', 
-                                    490, 235, 69, 71),
+                                    465, 185, 113, 74),
                 'melonFruit'    : (f'{bingsooPath}melonFruit.png', 
-                                    490, 235, 69, 71),
+                                    475, 273, 107, 99),
                 'iceCreamTub'   : (f'{bingsooPath}iceCreamTub.png', 
-                                    490, 235, 69, 71),
+                                    295, 255, 159, 120),
                 'jam'           : (f'{bingsooPath}jam.png', 
-                                    490, 235, 69, 71),
+                                    295, 155, 69, 91),
+    },
+
+    'board' : {
+
+    },
+
+    'boardArea' : (40, 430, 261, 150),
+
+    'bowlStates': {
+                () : (f'{bingsooPath}emptyBowl.png'),
+                ('mangoChopped') : 
+                                (f'{bingsooPath}mangoBowl.png'),
+                ('melonChopped') : 
+                                (f'{bingsooPath}melonBowl.png'),
+                ('mangoChopped', 'jam') : 
+                                (f'{bingsooPath}mangoWithJam.png'),
+                ('melonChopped', 'condensedMilk') : 
+                                (f'{bingsooPath}melonWithMilk.png')
     },
                 
-    'mangoBlender'  : (f'{bingsooPath}mangoBlender.png', 
-                        190, 145, 85, 141),
-    'melonBlender'  : (f'{bingsooPath}melonBlender.png', 
-                        190, 145, 85, 141),
-    'choppedMango'  : (f'{bingsooPath}choppedMango.png', 
-                        190, 145, 85, 141),
-    'choppedMelon'  : (f'{bingsooPath}choppedMelon.png', 
-                        440, 160, 57, 66),
-    
-    'mangoBowl'     : (f'{bingsooPath}mangoBowl.png', 
-                        490, 235, 69, 71),
-    'melonBowl'     : (f'{bingsooPath}melonBowl.png', 
-                        490, 235, 69, 71),
-    'mangoWithJam'  : (f'{bingsooPath}mangoWithJam.png', 
-                        490, 235, 69, 71),
-    'melonWithMilk' : (f'{bingsooPath}melonWithMilk.png', 
-                        490, 235, 69, 71),
+    # 'mangoBlender'  : (f'{bingsooPath}mangoBlender.png', 
+    #                     190, 145, 85, 141),
+    # 'melonBlender'  : (f'{bingsooPath}melonBlender.png', 
+    #                     190, 145, 85, 141),
+    # 'mangoChopped'  : (f'{bingsooPath}choppedMango.png', 
+    #                     190, 145, 85, 141),
+    # 'melonChopped'  : (f'{bingsooPath}choppedMelon.png', 
+    #                     440, 160, 57, 66),
     'iceCreamScoop' : (f'{bingsooPath}iceCreamScoop.png', 
                         490, 235, 69, 71),
+    
 }
