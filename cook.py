@@ -14,12 +14,19 @@ class Cook:
         self.drag           = None
         self.offset         = (0, 0)
 
+    def ingredientUnder(self, x, y):
+        for key, (url, ix, iy, iw, ih) in self.ingredients['starter'].items():
+            if (ix <= x <= ix+iw) and (iy <= y <= iy+ih):
+                return key
+        return None
+    
     def handleMousePress(self, x, y):
+
         if self.hitReset(x, y):
             self.resetIngredients()
         
         key = self.ingredientUnder(x, y)
-        if key != None and key != 'emptyBowl':
+        if key != None and key != 'emptyBowl' and key != 'blender':
             self.drag = key
             url, ix, iy, iw, ih = self.ingredients['starter'][key]
             self.offset = (x-ix, y-iy)
@@ -37,6 +44,7 @@ class Cook:
             url, ix, iy, iw, ih = self.ingredients['starter'][key]
             # bowl
             url, bx, by, bw, bh = self.ingredients['starter']['emptyBowl']
+            bh = 157 # changing bowl height because png has empty space at top
             
             if self.overlap(ix, iy, iw, ih, bx, by, bw, bh):
                 self.dropIntoBowl(key)
@@ -51,12 +59,6 @@ class Cook:
     def resetIngredients(self):
         self.placed.clear()
         self.ingredients['starter'] = copy.deepcopy(self.ogStarter)
-    
-    def ingredientUnder(self, x, y):
-        for key, (url, ix, iy, iw, ih) in self.ingredients['starter'].items():
-            if (ix <= x <= ix+iw) and (iy <= y <= iy+ih):
-                return key
-        return None
 
     def hitReset(self, x, y):
         return 500 <= x <= 580 and 20 <= y <= 60 # button rect
@@ -98,9 +100,6 @@ class Cook:
 
         if self.drag:
             url, x, y, w, h = self.ingredients['starter'][self.drag]
-            imgs.append((url, x, y, w, h))
-
-        for key, (url, x, y, w, h) in self.ingredients['board'].items():
             imgs.append((url, x, y, w, h))
 
         # reset button is always in same place)
@@ -145,6 +144,18 @@ class Bingsoo(Cook):
         super().__init__(chosenRecipe, bingsooIngredients,
                          steps=mangoSteps if 'mango' in chosenRecipe 
                          else melonSteps)
+    
+    def ingredientUnder(self, x, y):
+
+        for key, (url, ix, iy, iw, ih) in self.ingredients['board'].items():
+            if (ix <= x <= ix+iw) and (iy <= y <= iy+ih):
+                return key
+
+        for key, (url, ix, iy, iw, ih) in self.ingredients['starter'].items():
+            if (ix <= x <= ix+iw) and (iy <= y <= iy+ih):
+                return key
+            
+        return None
         
     def handleMouseRelease(self, x, y):
         if self.drag != None:
@@ -155,21 +166,39 @@ class Bingsoo(Cook):
             url, bx, by, bw, bh = self.ingredients['starter']['emptyBowl']
             # chopping board
             cx, cy, cw, ch = 40, 430, 261, 150
+            # blender
+            blx, bly, blw, blh = 35, 160, 243, 245
 
-            if self.overlap(ix, iy, iw, ih, bx, by, bw, bh):
+            if Cook.overlap(ix, iy, iw, ih, bx, by, bw, bh):
                 self.dropIntoBowl(key)
-            elif self.overlap(ix, iy, iw, ih, cx, cy, cw, ch):
+            elif Cook.overlap(ix, iy, iw, ih, cx, cy, cw, ch):
                 self.chopFruit(key)
+            elif Cook.overlap(ix, iy, iw, ih, blx, bly, blw, blh):
+                self.blend(key)
 
             self.drag = None
     
     def chopFruit(self, fruit):
-        url, x, y, w, h = self.ingredients['starter'].pop(fruit, None)
-        newUrl = url.replace('.png', 'Chopped.png')
-
-        bx, by, bw, bh = self.ingredients['boardArea']
-        x = bx + (bw-w)//2
-        y = by + (bh-h)//2
-
-        self.ingredients['board'][fruit] = (newUrl, x,y , w, h)
-
+        url, x, y, w, h = self.ingredients['starter'].pop(fruit)
+        choppedUrl = url.replace('Fruit.png', 'Chopped.png') 
+        choppedName = f'{fruit}Chopped'
+        self.ingredients['starter'][choppedName] = (choppedUrl, x, y, w, h)
+        if self.drag == fruit:
+            self.drag = choppedName
+    
+    def blend(self, choppedFruit):
+        if choppedFruit == 'mangoChopped' or choppedFruit == 'melonChopped':
+            self.ingredients['starter'].pop(choppedFruit, None)
+            
+            url, x, y, w, h = self.ingredients['starter'].pop('blender')
+    
+            if choppedFruit == 'mangoChopped':
+                blendUrl = f'{bingsooPath}mangoBlender.png'
+                blendName = 'mangoBlender'
+            else:   
+                blendUrl = f'{bingsooPath}melonBlender.png'
+                blendName = 'melonBlender'
+            
+            self.ingredients['starter'][blendName] = (blendUrl, x, y, w, h)
+            
+            
