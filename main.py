@@ -2,7 +2,6 @@ from cmu_graphics import *
 from PIL import Image
 from customer import *
 from recipes import *
-from profits import *
 from cook import *
 from kitchen import *
 
@@ -24,7 +23,7 @@ def onAppStart(app):
     app.rx, app.ry, app.rw, app.rh = 500, 20, 80, 40
         
 
-    # {name : [order price, order cost, recipe page url]}
+    # {name : [order price, order cost]}
     app.orders = {
         # 'Coconut Latte'     : [2.99, 0.30], 
         # 'Iced Americano'    : [1.99, 0.20],
@@ -46,11 +45,8 @@ def onAppStart(app):
     app.orderMade = None
     app.orderx, app.ordery = 300, 400
     app.orderw = app.orderh = 0
-
-
     app.kitchen = Kitchen(app)    
     app.newCustomer = False
-    
 
     # images
     app.kitchenImg = CMUImage(Image.open('images/kitchen.png'))
@@ -120,7 +116,6 @@ def onMousePress(app,mouseX,mouseY):
     #######################################
     # Cooking Game Screen
     #######################################
-
     elif app.screen =='cookGame':
         app.currCook.handleMousePress(mouseX, mouseY)
         
@@ -161,7 +156,7 @@ def redrawAll(app):
 
     # start screen
     if app.screen == 'start':
-        # drawLabel('start', 300, 300, size = 80, font = 'Pixelify Sans')
+        drawLabel('start', 300, 300, size = 80)
         drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
 
         
@@ -169,15 +164,16 @@ def redrawAll(app):
     elif app.screen == 'kitchen':
         drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
         drawImage(app.currCust.sprite, 80, 207, width=189, height=189)
-        drawLabel(app.currCust.speak(), 230, 100, size = 10)
-        drawLabel(f'Money Made: {app.moneyMade}', 175, 605, size = 20)
+        
+        for text, margin in app.currCust.getSpeakLines():
+            drawLabel(text, 230, margin, size = 12)
+        drawLabel(f'Money Made: ${app.moneyMade}', 175, 605, size = 20)
         drawLabel(f'Served: {app.served}', 175, 630, size = 20)
         if app.orderMade != None:
             url = f'finishedFoods/{app.orderMade}.png'
             plateImg = CMUImage(Image.open(url))
             drawImage(plateImg, app.orderx, app.ordery, width = 153, height = 168)
         drawImage('images/redoButton.png', 524, 40, width = 50, height = 51)
-        # drawRect(345, 60, 160, 120, fill = 'green', opacity = 50)
     
 
     #recipe book screen
@@ -188,8 +184,8 @@ def redrawAll(app):
         # drawRect(45, 70, 45, 43, fill='green', opacity = 50)
         
         # Ready locations
-        # drawRect(75, 410, 150, 80, fill = 'green', opacity = 50)
-        # drawRect(380, 410, 150, 80, fill = 'green', opacity = 50)
+        drawLabel('ready', 150, 450)
+        drawLabel('ready', 450, 450)
     
     elif app.screen == 'cookGame':
         scene = app.currCook.getScene()
@@ -197,6 +193,9 @@ def redrawAll(app):
 
         for url, x, y, w, h in scene['images']:
             drawImage(CMUImage(Image.open(url)), x, y, width=w, height=h)
+        
+        for text, margin in app.currCook.getInstructionLines():
+            drawLabel(text, 370, margin, size = 11)
     
         if app.currCook.finishedOrder == True:
             drawLabel('Done!', app.width/2, app.height/2, size = 50)

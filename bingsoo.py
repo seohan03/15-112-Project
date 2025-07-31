@@ -1,8 +1,7 @@
 mangoSteps = [
-    '''Make sure to do these in order!! 
-    and be careful not to get anything stuck in the blender''',
-    'Place mango on chopping board to cut',
-    'Shake mouse to cut',
+    '''Do these in order!! also be careful not to get\n
+    anything stuck in the blender.\n
+    Place mango on chopping board to cut''',
     'Add cut fruit into freezing blender',
     'Pour shavings into bowl',
     'Drizzle mango jam',
@@ -11,10 +10,9 @@ mangoSteps = [
 ] 
 
 melonSteps = [
-    '''Make sure to do these in order!! 
-    and be careful not to get anything stuck in the blender''',
-    'Place melon on chopping board to cut',
-    'Shake mouse to cut',
+    '''Do these in order!! also be careful not to get\n
+    anything stuck in the blender.\n
+    Place melon on chopping board to cut''',
     'Add cut fruit into freezing blender',
     'Pour shavings into bowl',
     'Drizzle condensed milk',

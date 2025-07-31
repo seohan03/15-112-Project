@@ -3,6 +3,7 @@ class Recipe():
     def __init__(self, orderName):
         self.orderName = orderName
     
+    # get which page the recipe book screen should draw from
     def getRecipePage(self):
         if (self.orderName == 'Ube Pancake' or 
             self.orderName == 'Pandan Egg Waffle'):
@@ -16,7 +17,8 @@ class Recipe():
         elif(self.orderName == 'Melon Bingsoo' or 
              self.orderName == 'Mango Bingsoo'):
             return 'bingsooPage'
-    
+        
+    # get the image for the recipe book screen
     def getRecipeBookScreen(self):
         recipe = self.getRecipePage()
         if recipe == 'pancakePage':

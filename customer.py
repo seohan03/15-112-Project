@@ -3,7 +3,7 @@ import random
 phrases = [
     'Hello may I please\nget order please',
     'mmm the order\nsounds perfect today',
-    'My friend told me to try\nthe order, get me one of those!'
+    'My friend told me to try\nthe order, \nget me one of those!'
 ]
 
 class Customer:
@@ -25,6 +25,19 @@ class Customer:
             + self.orderName
             + self.phraseTemp[orderIdx+5:]
         )
+    
+    def getSpeakLines(self):
+        lines = []
+        ogLine = self.speak()
+        parts = ogLine.split('\n')
+
+        lineHeight = 12
+        marginy = 80
+        for part in parts:
+            lines.append((part, marginy))
+            marginy += lineHeight
+
+        return lines
 
     def isSatisfied(self, givenOrder):
         return givenOrder == self.orderName

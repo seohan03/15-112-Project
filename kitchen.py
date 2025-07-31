@@ -84,5 +84,3 @@ class Kitchen():
         # reset
         self.app.orderMade = None
         self.ox, self.oy = 400, 400
-
-

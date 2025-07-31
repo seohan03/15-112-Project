@@ -9,7 +9,8 @@ class Cook:
 
     def __init__(self, chosenRecipe, ingredients, steps):
         self.chosen         = chosenRecipe
-        self.step           = steps
+        self.steps          = steps
+        self.step           = 0
         self.placed         = set()
         self.ingredients    = copy.deepcopy(ingredients)  
         self.ogStarter      = copy.deepcopy(ingredients['starter'])
@@ -69,12 +70,13 @@ class Cook:
 
     def recordDrop(self, ingre):
         if ingre not in self.placed:
-            self.placed.append(ingre)
+            self.placed.add(ingre)
             self.ingredients['starter'].pop(ingre, None)
 
     def resetIngredients(self):
         self.placed.clear()
         self.ingredients['starter'] = copy.deepcopy(self.ogStarter)
+        self.step = 0
 
     def hitReset(self, x, y):
         return rx <= x <= rx+rw and ry <= y <= ry+rh # button rect
@@ -82,6 +84,7 @@ class Cook:
     def dropIntoBowl(self, ingredient):
         self.placed.add(ingredient)
         self.ingredients['starter'].pop(ingredient, None)
+        self.nextStep()
 
     def bowlImage(self):
         placedSet = set(self.placed)
@@ -99,7 +102,6 @@ class Cook:
 
         self.finishedOrder = (len(bestCombo) == maxCombo)
         
-
         return bestImg
 
     def getScene(self):
@@ -120,8 +122,21 @@ class Cook:
         imgs.append(('images/redoButton.png', 80, 40, 50, 51))
 
         return {'images': imgs}
+    
+    def getInstructionLines(self):
+        lines = []
+        ogLine = self.steps[self.step]
+        parts = ogLine.split('\n')
 
-    def chefSpeak(self):
+        lineHeight = 10
+        marginy = 44
+        for part in parts:
+            lines.append((part, marginy))
+            marginy += lineHeight
+
+        return lines
+    
+    def getCurrInstruction(self):
         return self.steps[self.step]
 
     def nextStep(self):
@@ -136,19 +151,21 @@ class Cook:
 
 
 # Subclasses 
+# https://www.youtube.com/watch?v=s1Mz0TtH504&ab_channel=KennyYipCoding 
+# used this video to help understand how to use super().__init__ and overriding
 
 class Pancakes(Cook):
     def __init__(self, chosenRecipe):
         # pick the right step‑list and ingredient map
         super().__init__(chosenRecipe, pancakeIngredients,
-                         steps=ubeSteps if 'ube' in chosenRecipe 
+                         steps=ubeSteps if 'Ube Pancake' == chosenRecipe 
                          else pandanSteps)
 
 
 class Bingsoo(Cook):
     def __init__(self, chosenRecipe):
         super().__init__(chosenRecipe, bingsooIngredients,
-                         steps=mangoSteps if 'mango' in chosenRecipe 
+                         steps=mangoSteps if 'Mango Bingsoo' == chosenRecipe 
                          else melonSteps)
     
     def ingredientUnder(self, x, y):
@@ -191,6 +208,7 @@ class Bingsoo(Cook):
         self.ingredients['starter'][choppedName] = (choppedUrl, x, y, w, h)
         if self.drag == fruit:
             self.drag = choppedName
+        self.nextStep()
     
     def blend(self, choppedFruit):
         if choppedFruit == 'mangoChopped' or choppedFruit == 'melonChopped':
@@ -206,5 +224,6 @@ class Bingsoo(Cook):
                 blendName = 'melonBlender'
             
             self.ingredients['starter'][blendName] = (blendUrl, x, y, w, h)
+            self.nextStep()
             
             

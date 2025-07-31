@@ -1,26 +1,26 @@
 # Controls all the mouse clicks/drags for cooking pancakes
 
 ubeSteps = [
-    'Make sure to do these in order!!',
-    'Add the pancake mix',
+    '''Make sure to do these in order!!
+    Add the pancake mix''',
     'Add egg into the bowl',
     'Add milk into the bowl',
     'Mash in the ube',
     'Mix all together',
-    'Pour mixture into the frying pan',
-    'Cook and flip once color changes',
+    # 'Pour mixture into the frying pan',
+    # 'Cook and flip once color changes',
     'All done!'
 ]
 
 pandanSteps = [
-    'Make sure to do these in order!!',
-    'Add the pancake mix',
+    '''Make sure to do these in order!!,
+    Add the pancake mix''',
     'Add egg into the bowl',
     'Add milk into the bowl',
     'Add in the pandan extract',
     'Mix all together',
-    'Pour mixture into the egg waffle pan',
-    'Cook and flip the pan once there is steam',
+    # 'Pour mixture into the egg waffle pan',
+    # 'Cook and flip the pan once there is steam',
     'All done!'
 ]
 
