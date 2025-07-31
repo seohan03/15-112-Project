@@ -152,6 +152,8 @@ def onMouseRelease(app, mouseX, mouseY):
 # Draw 
 ############################################################
 
+# all images drawn by me!
+
 def redrawAll(app):
 
     # start screen
