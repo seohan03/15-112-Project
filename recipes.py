@@ -56,20 +56,20 @@ class Recipe():
 
         if sideOfPage == 'leftPage':
             if recipeBook == 'pancakePage':
-                return 'ube'
+                return 'Ube Pancake'
             elif recipeBook == 'coffeePage':
-                return 'coconut'
+                return 'Coconut Latte'
             elif recipeBook == 'matchaPage':
-                return 'icedMatcha'
+                return 'Iced Matcha'
             elif recipeBook == 'bingsooPage':
-                return 'melon'
+                return 'Melon Bingsoo'
             
         elif sideOfPage == 'rightPage':
             if recipeBook == 'pancakePage':
-                return 'pandan'
+                return 'Pandan Egg Waffle'
             elif recipeBook == 'coffeePage':
-                return 'americano'
+                return 'Iced Americano'
             elif recipeBook == 'matchaPage':
-                return 'hotMatcha'
+                return 'Hot Matcha Latte'
             elif recipeBook == 'bingsooPage':
-                return 'mango'
+                return 'Mango Bingsoo'

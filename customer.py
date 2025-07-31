@@ -8,21 +8,25 @@ phrases = [
 
 class Customer:
     def __init__(self, image, ordersDict):
-        self.sprite = image
-
-        names = [name for name in ordersDict]
-        index = random.randrange(len(names))
-        self.orderName  = 'Mango Bingsoo' #should be names[index]
-        
+        self.sprite    = image
+        names          = list(ordersDict)
+        index          = random.randrange(len(names))
+        self.orderName = names[index]
         self.price, self.cost = ordersDict[self.orderName]
-    
-    def speak(self):
-        phrase = phrases[random.randrange(len(phrases))]
-        orderIdx = phrase.find('order')
-        return phrase[:orderIdx] + self.orderName + phrase[orderIdx+5:]
 
-    def isSatisfied(self, givenOrder, x, y):
-        if 80 <= x <= 269 and 207 <= y <= 396:
-            return givenOrder == self.orderName
+        templateIndex   = random.randrange(len(phrases))
+        self.phraseTemp = phrases[templateIndex]
+
+            
+    def speak(self):
+        orderIdx = self.phraseTemp.find('order')
+        return (
+            self.phraseTemp[:orderIdx]
+            + self.orderName
+            + self.phraseTemp[orderIdx+5:]
+        )
+
+    def isSatisfied(self, givenOrder):
+        return givenOrder == self.orderName
 
 

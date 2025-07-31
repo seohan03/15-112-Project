@@ -1,11 +1,11 @@
 from cmu_graphics import *
-from PIL import Image, ImageFont
+from PIL import Image
 from customer import *
 from recipes import *
 from profits import *
 from cook import *
+from kitchen import *
 
-font = ImageFont.truetype("PixelifySans-Regular.ttf", size=36)
 
 def rectsOverlap(x1, y1, w1, h1, x2, y2, w2, h2):
     return not (x1 + w1 < x2 or x1 > x2 + w2 or  
@@ -19,15 +19,17 @@ def onAppStart(app):
     app.dragging = None
     app.draggingName = None
     app.dragOffset = (0, 0)
+    app.chosenRecipe = None
     # reset buttons for cook game
     app.rx, app.ry, app.rw, app.rh = 500, 20, 80, 40
+        
 
     # {name : [order price, order cost, recipe page url]}
     app.orders = {
-        'Coconut Latte'     : [2.99, 0.30], 
-        'Iced Americano'    : [1.99, 0.20],
-        'Iced Matcha Latte' : [3.99, 0.99],
-        'Hot Matcha Latte'  : [3.99, 0.99],
+        # 'Coconut Latte'     : [2.99, 0.30], 
+        # 'Iced Americano'    : [1.99, 0.20],
+        # 'Iced Matcha Latte' : [3.99, 0.99],
+        # 'Hot Matcha Latte'  : [3.99, 0.99],
         'Ube Pancake'       : [4.99, 1.50],
         'Pandan Egg Waffle' : [4.99, 1.59],
         'Mango Bingsoo'     : [4.50, 1.20],
@@ -38,11 +40,15 @@ def onAppStart(app):
     app.moneyMade = 0
     app.moneySpent = 0
     app.served = 0
-    app.currCust = Customer(CMUImage(Image.open('customers/pink-still.png')),
+    app.currCust = Customer(CMUImage(Image.open('customers/pink.png')),
                             app.orders)
     app.currRecipe = Recipe(app.currCust.orderName)
     app.orderMade = None
-    app.orderx, app.ordery, app.orderw, app.orderh = 400, 400, 153, 168
+    app.orderx, app.ordery = 300, 400
+    app.orderw = app.orderh = 0
+
+
+    app.kitchen = Kitchen(app)    
     app.newCustomer = False
     
 
@@ -52,7 +58,6 @@ def onAppStart(app):
 ############################################################
 # Mouse Press / Change Screen Functions
 ############################################################
-
 
 def onMousePress(app,mouseX,mouseY):
 
@@ -68,12 +73,13 @@ def onMousePress(app,mouseX,mouseY):
     # Kitchen Screen
     #######################################
     elif app.screen == 'kitchen':
-        if app.orderMade != None:
-            
+        app.kitchen.redoButton(mouseX, mouseY)
+        app.kitchen.handleMousePress(mouseX, mouseY)
+        if app.kitchen.dragging:
+            return
 
-                
         # not magic numbers, values based on where buttons are in drawing
-        if (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
+        elif (340 <= mouseX <= 500) and (60 <= mouseY <= 180):
             app.screen = 'recipeBook'
         
     
@@ -89,7 +95,7 @@ def onMousePress(app,mouseX,mouseY):
         # ready button
         if app.currRecipe.isOnReady(mouseX, mouseY):
             
-            chosenRecipe = app.currRecipe.getChosenRecipe(mouseX, mouseY)
+            app.chosenRecipe = app.currRecipe.getChosenRecipe(mouseX, mouseY)
 
             app.gameImg = (CMUImage(Image.open(
                             app.currRecipe.getGameImg())
@@ -97,16 +103,16 @@ def onMousePress(app,mouseX,mouseY):
             
             if (app.currRecipe.orderName == 'Ube Pancake' or 
                 app.currRecipe.orderName == 'Pandan Egg Waffle'):
-                app.currCook = Pancakes(chosenRecipe)
+                app.currCook = Pancakes(app.chosenRecipe)
             elif (app.currRecipe.orderName == 'Mango Bingsoo' or 
                 app.currRecipe.orderName == 'Melon Bingsoo'):
-                app.currCook = Bingsoo(chosenRecipe)
+                app.currCook = Bingsoo(app.chosenRecipe)
             elif (app.currRecipe.orderName == 'Iced Americano' or 
                 app.currRecipe.orderName == 'Coconut Latte'):
-                app.currCook = Coffee(chosenRecipe)
+                app.currCook = Coffee(app.chosenRecipe)
             elif (app.currRecipe.orderName == 'Hot Matcha Latte' or 
                 app.currRecipe.orderName == 'Iced Matcha Latte'):
-                app.currCook = Matcha(chosenRecipe)
+                app.currCook = Matcha(app.chosenRecipe)
             
             app.screen = 'cookGame'
 
@@ -122,23 +128,30 @@ def onMousePress(app,mouseX,mouseY):
 def onMouseDrag(app, mouseX, mouseY):
     if app.screen == 'kitchen':
         if app.orderMade != None:
-            
+            app.kitchen.handleMouseDrag(mouseX, mouseY)
 
-    if app.screen == 'cookGame':
+    elif app.screen == 'cookGame':
         app.currCook.handleMouseDrag(mouseX, mouseY)
 
 def onMouseRelease(app, mouseX, mouseY):
     if app.screen == 'kitchen':
         if app.orderMade != None:
-           if app.currCust.isSatisfied(app.orderMade, mouseX, mouseY):
-               app.newCustomer = True
+            app.kitchen.handleMouseRelease(mouseX, mouseY)
                
-
-    if app.screen == 'cookGame':
+    elif app.screen == 'cookGame':
         app.currCook.handleMouseRelease(mouseX, mouseY)
         if app.currCook.finishedOrder == True:
             app.screen = 'kitchen'
             app.orderMade = app.currCook.chosen
+            app.orderx, app.ordery = 300, 400
+
+            path = f'finishedFoods/{app.orderMade}.png'
+            img  = Image.open(path)
+            w, h = img.size
+            img.close()
+            app.orderw, app.orderh = w, h
+
+
 
 ############################################################
 # Draw 
@@ -148,22 +161,23 @@ def redrawAll(app):
 
     # start screen
     if app.screen == 'start':
-        drawLabel('start', 300, 300, size = 80, font = 'Pixelify Sans')
+        # drawLabel('start', 300, 300, size = 80, font = 'Pixelify Sans')
+        drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
 
         
-
     #kitchen screen
     elif app.screen == 'kitchen':
         drawImage(app.kitchenImg, 0, 0, width = app.width, height = app.height)
         drawImage(app.currCust.sprite, 80, 207, width=189, height=189)
-        drawLabel(app.currCust.speak(), 240, 100, size = 10)
-        drawLabel(f'Money Made: {app.moneyMade}', app.width/2, 600, size = 20)
-        drawLabel(f'Served: {app.served}', app.width/2, 640, size = 20)
+        drawLabel(app.currCust.speak(), 230, 100, size = 10)
+        drawLabel(f'Money Made: {app.moneyMade}', 175, 605, size = 20)
+        drawLabel(f'Served: {app.served}', 175, 630, size = 20)
         if app.orderMade != None:
-            drawImage((CMUImage(Image.open(
-                            f'finishedFoods/{app.currCook.chosen}')
-                            )), 400, 400, 153, 168)
-        # drawRect(340, 60, 160, 120, fill = 'green', opacity = 50)
+            url = f'finishedFoods/{app.orderMade}.png'
+            plateImg = CMUImage(Image.open(url))
+            drawImage(plateImg, app.orderx, app.ordery, width = 153, height = 168)
+        drawImage('images/redoButton.png', 524, 40, width = 50, height = 51)
+        # drawRect(345, 60, 160, 120, fill = 'green', opacity = 50)
     
 
     #recipe book screen

@@ -2,6 +2,8 @@ from bingsoo import *
 from pancakes import *
 import copy
 
+#reset button vals
+rx, ry, rw, rh = 80, 40, 50, 51
 
 class Cook:
 
@@ -14,7 +16,6 @@ class Cook:
         self.drag           = None
         self.offset         = (0, 0)
         self.finishedOrder  = False
-        
 
 
     def ingredientUnder(self, x, y):
@@ -76,7 +77,7 @@ class Cook:
         self.ingredients['starter'] = copy.deepcopy(self.ogStarter)
 
     def hitReset(self, x, y):
-        return 500 <= x <= 580 and 20 <= y <= 60 # button rect
+        return rx <= x <= rx+rw and ry <= y <= ry+rh # button rect
 
     def dropIntoBowl(self, ingredient):
         self.placed.add(ingredient)
@@ -116,7 +117,7 @@ class Cook:
             imgs.append((url, x, y, w, h))
 
         # reset button is always in same place)
-        imgs.append(('reset.png', 500, 20, 80, 40))
+        imgs.append(('images/redoButton.png', 80, 40, 50, 51))
 
         return {'images': imgs}
 

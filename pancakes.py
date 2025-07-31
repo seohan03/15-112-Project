@@ -41,7 +41,7 @@ pancakeIngredients = {
                     'emptyBowl'     : (f'{pancakePath}bowl.png',
                                     350, 350, 205, 157),
                     'spoon'         : (f'{pancakePath}spoon.png',
-                                    50, 50, 90, 150)
+                                    150, 150, 90, 150)
                 },
 
     'bowlStates': {
